@@ -38,7 +38,7 @@
 #endif //SDSUPPORT
 
 
-Esp3DLib esp3dlib;
+Esp3DLib espExternalLib;
 
 Esp3D myesp3d;
 
