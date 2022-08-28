@@ -57,6 +57,6 @@ public:
 /**
  * @brief You must call esp3dlib.init() before using this variable.
  */
-extern Esp3DLib esp3dlib;
+extern Esp3DLib espExternalLib;
 
 #endif
