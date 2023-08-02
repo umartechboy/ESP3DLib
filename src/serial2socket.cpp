@@ -29,8 +29,17 @@
 Serial_2_Socket Serial2Socket;
 
 
+void (*echoFunc)(const char*) = 0;
+void echo(const char* _echo){
+    if (echoFunc)
+        echoFunc(_echo);
+}
+void Serial_2_Socket::SetEcho(void (*_echo)(const char*)){
+    echoFunc = _echo;
+}
 Serial_2_Socket::Serial_2_Socket()
 {
+    // echo("Serial2Socket::Serial_2_Socket()");
     _web_socket = NULL;
     _TXbufferSize = 0;
     _RXbufferSize = 0;
@@ -47,6 +56,7 @@ Serial_2_Socket::~Serial_2_Socket()
 }
 void Serial_2_Socket::begin(long speed)
 {
+    // echo("Serial2Socket::begin()");
     _TXbufferSize = 0;
     _RXbufferSize = 0;
     _RXbufferpos = 0;
@@ -54,6 +64,7 @@ void Serial_2_Socket::begin(long speed)
 
 void Serial_2_Socket::end()
 {
+    // echo("Serial2Socket::end()");
     _TXbufferSize = 0;
     _RXbufferSize = 0;
     _RXbufferpos = 0;
@@ -66,6 +77,7 @@ long Serial_2_Socket::baudRate()
 
 bool Serial_2_Socket::attachWS(void * web_socket)
 {
+    // echo("Serial2Socket::attachWS()");
     if (web_socket) {
         _web_socket = web_socket;
         _TXbufferSize=0;
@@ -76,6 +88,7 @@ bool Serial_2_Socket::attachWS(void * web_socket)
 
 bool Serial_2_Socket::detachWS()
 {
+    // echo("Serial2Socket::detachWS()");
     _web_socket = NULL;
     return true;
 }
@@ -86,6 +99,9 @@ Serial_2_Socket::operator bool() const
 }
 int Serial_2_Socket::available()
 {
+    // This is now calld for sure.
+    // if(_RXbufferSize)
+    //     echo("Serial2Socket::available() > 0");
     return _RXbufferSize;
 }
 
@@ -101,11 +117,15 @@ size_t Serial_2_Socket::write(uint8_t c)
 
 size_t Serial_2_Socket::write(const uint8_t *buffer, size_t size)
 {
+    // String debug =  String("Serial2Socket::write(buffer, ") + String(size);
+    // echo(debug.c_str());
     if((buffer == NULL) ||(!_web_socket)) {
         if(buffer == NULL) {
+            // echo("[SOCKET]No buffer");
             log_i("[SOCKET]No buffer");
         }
         if(!_web_socket) {
+            // echo("[SOCKET]No Socket");
             log_i("[SOCKET]No socket");
         }
         return 0;
@@ -132,6 +152,7 @@ size_t Serial_2_Socket::write(const uint8_t *buffer, size_t size)
 int Serial_2_Socket::peek(void)
 {
     if (_RXbufferSize > 0) {
+        // echo("Serial2Socket::peek()");
         return _RXbuffer[_RXbufferpos];
     } else {
         return -1;
@@ -140,13 +161,20 @@ int Serial_2_Socket::peek(void)
 
 bool Serial_2_Socket::push (const char * data)
 {
+// echo("Serial2Soclet::push()");
 #if defined(ENABLE_SERIAL2SOCKET_IN)
     int data_size = strlen(data);
+    // String debug = String("Sz: ") + String(data_size);
+    // debug += ", _RXbufferSize: " +String(_RXbufferSize);
+    // debug += ", _RXbufferpos: " +String(_RXbufferpos); 
+    // echo(debug.c_str());
     if ((data_size + _RXbufferSize) <= RXBUFFERSIZE) {
         int current = _RXbufferpos + _RXbufferSize;
         if (current > RXBUFFERSIZE) {
             current = current - RXBUFFERSIZE;
         }
+        // String debug2 = String("Serial2Soclet::push(") + String(data) + ")";
+        // echo(debug2.c_str());
         for (int i = 0; i < data_size; i++) {
             if (current > (RXBUFFERSIZE-1)) {
                 current = 0;
@@ -172,6 +200,8 @@ int Serial_2_Socket::read(void)
             _RXbufferpos = 0;
         }
         _RXbufferSize--;
+        // String readEchoStr = String("Read(") + String((char)v) + ")";
+        // echo(readEchoStr.c_str());
         return v;
     } else {
         return -1;

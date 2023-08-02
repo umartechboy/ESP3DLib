@@ -33,7 +33,7 @@ public:
     ~Serial_2_Socket();
     size_t write(uint8_t c);
     size_t write(const uint8_t *buffer, size_t size);
-
+    void SetEcho(void (*echo)(const char*));
     inline size_t write(const char * s)
     {
         return write((uint8_t*) s, strlen(s));

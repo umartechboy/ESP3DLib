@@ -22,31 +22,13 @@
 #define ESP_XSTR_(M) #M
 #define ESP_XSTR(M) ESP_XSTR_(M)
 #endif
-#ifndef SRCHOME
-#define SRCHOME ../../../../../Marlin/src
-#endif
-#ifndef HALHOME
-#define HALHOME SRCHOME/HAL
-#endif
-#define MARLIN_HAL_PATH(PATH) HAL_PATH(HALHOME, PATH)
-#define MARLIN_PATH(PATH) ESP_XSTR(SRCHOME/PATH)
-
-#if 0
-#define HAL_INCLUDE MARLIN_HAL_PATH(hal-file.h)
-#define SRC_INCLUDE MARLIN_PATH(src-file.h)
-static_assert(false,
-  " SRCHOME='" ESP_XSTR(SRCHOME) "'"
-  " HALHOME='" ESP_XSTR(HALHOME) "'"
-  " HAL_INCLUDE='" ESP_XSTR(HAL_INCLUDE) "'"
-  " SRC_INCLUDE='" ESP_XSTR(SRC_INCLUDE) "'"
-);
-#endif
-
+#define MARLIN_HAL_PATH(PATH) HAL_PATH( ../../../../../Marlin/src/HAL, PATH)
+#define MARLIN_PATH(PATH) ESP_XSTR(../../../../../Marlin/src/PATH)
 #include MARLIN_PATH(inc/MarlinConfigPre.h)
 #undef DISABLED
 #undef _BV
 //version
-#define LIB_VERSION "1.0.12"
+#define LIB_VERSION "1.0.11"
 
 //Allow to override the default core used by ESP3DLIB
 #ifndef ESP3DLIB_RUNNING_CORE
@@ -126,7 +108,7 @@ static_assert(false,
 //defaults values
 #define DEFAULT_HOSTNAME "marlinesp"
 #ifndef WIFI_SSID
-#define DEFAULT_STA_SSID "MARLIN_ESP"
+#define DEFAULT_STA_SSID "Markhor3D"
 #define DEFAULT_RADIO_MODE ESP_WIFI_AP
 #else
 #define DEFAULT_STA_SSID WIFI_SSID
@@ -141,7 +123,7 @@ static_assert(false,
 #define DEFAULT_STA_GW "0.0.0.0"
 #define DEFAULT_STA_MK "0.0.0.0"
 #define DEFAULT_STA_IP_MODE DHCP_MODE
-#define DEFAULT_AP_SSID "MARLIN_ESP"
+#define DEFAULT_AP_SSID "Markhor3D"
 #define DEFAULT_AP_PWD "12345678"
 #define DEFAULT_AP_IP "192.168.0.1"
 #define DEFAULT_AP_MK "255.255.255.0"

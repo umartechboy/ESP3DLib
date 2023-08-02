@@ -110,6 +110,9 @@ long Web_Server::get_client_ID()
     return  _id_connection;
 }
 
+void EchoGlobal(const char* echo){
+    Esp3DCom::echo(echo);
+}
 bool Web_Server::begin()
 {
 
@@ -136,12 +139,15 @@ bool Web_Server::begin()
     //ask server to track these headers
     _webserver->collectHeaders (headerkeys, headerkeyssize );
 #endif
+    // String wsEchoStr = String("Initializing WebSocket server at: ") + (_port + 1);
+    // Esp3DCom::echo(wsEchoStr.c_str());
     _socket_server = new WebSocketsServer(_port + 1);
     _socket_server->begin();
     _socket_server->onEvent(handle_Websocket_Event);
-
-
     //Websocket output
+    // Esp3DCom::echo("Call Serial2Socket.attachWS()");
+    // EchoGlobal("Call Serial2Socket.attachWS() from GlobalEcho");
+    Serial2Socket.SetEcho(EchoGlobal);
     Serial2Socket.attachWS(_socket_server);
 
     //Web server handlers
@@ -432,6 +438,9 @@ void Web_Server::handle_SSDP ()
 //Handle web command query and send answer//////////////////////////////
 void Web_Server::handle_web_command ()
 {
+    // String hwcEchoStr = String("handle_web_command()\r\nArgs (") + String(_webserver->args()) + ")";
+    // Esp3DCom::echo(hwcEchoStr.c_str());
+  
     //to save time if already disconnected
     //if (_webserver->hasArg ("PAGEID") ) {
     //    if (_webserver->arg ("PAGEID").length() > 0 ) {
@@ -466,6 +475,8 @@ void Web_Server::handle_web_command ()
             //only [ESP800] is allowed login free if authentication is enabled
             if ( (auth_level == LEVEL_GUEST)  && (cmd_part1.toInt() != 800) ) {
                 _webserver->send (401, "text/plain", "Authentication failed!\n");
+                // String authEchoStr = String("Authentication failed (1)!");
+                // Esp3DCom::echo(authEchoStr.c_str());
                 return;
             }
             //is there space for parameters?
@@ -476,6 +487,8 @@ void Web_Server::handle_web_command ()
             if (cmd_part1.toInt() >= 0) {
                 ESPResponseStream espresponse(_webserver);
                 //commmand is web only
+                // String eicEchoStr = String("execute_internal_command");
+                // Esp3DCom::echo(eicEchoStr.c_str());
                 COMMAND::execute_internal_command (cmd_part1.toInt(), cmd_part2, auth_level, &espresponse);
                 //flush
                 espresponse.flush();
@@ -484,6 +497,8 @@ void Web_Server::handle_web_command ()
         }
     } else { //execute GCODE
         if (auth_level == LEVEL_GUEST) {
+            // String authEchoStr = String("Authentication failed (2)!");
+            // Esp3DCom::echo(authEchoStr.c_str());
             _webserver->send (401, "text/plain", "Authentication failed!\n");
             return;
         }
@@ -495,6 +510,8 @@ void Web_Server::handle_web_command ()
         while ( scmd != "" ) {
             scmd+="\n";
             Serial2Socket.push(scmd.c_str());
+            // String pushEchoStr = String("Pushing Com: ") + scmd;
+            // Esp3DCom::echo(pushEchoStr.c_str());
             //GCodeQueue::enqueue_one_now(scmd.c_str());
             sindex++;
             scmd = get_Splited_Value(cmd,'\n', sindex);
@@ -505,6 +522,8 @@ void Web_Server::handle_web_command ()
 //Handle web command query and send answer//////////////////////////////
 void Web_Server::handle_web_command_silent ()
 {
+    // String hwcEchoStr = String("handle_web_command_silent()");
+    // Esp3DCom::echo(hwcEchoStr.c_str());
     //to save time if already disconnected
     //if (_webserver->hasArg ("PAGEID") ) {
     //   if (_webserver->arg ("PAGEID").length() > 0 ) {
@@ -1553,11 +1572,16 @@ void Web_Server::handle_Websocket_Event(uint8_t num, uint8_t type, uint8_t * pay
 {
 
     switch(type) {
-    case WStype_DISCONNECTED:
-        //USE_SERIAL.printf("[%u] Disconnected!\n", num);
+    case WStype_DISCONNECTED: {
+            String wsEchoStr = String("WebSocket Disconnected: ") + (num);
+            Serial.print(wsEchoStr.c_str());
+            //USE_SERIAL.printf("[%u] Disconnected!\n", num);
+        }
         break;
     case WStype_CONNECTED: {
         IPAddress ip = _socket_server->remoteIP(num);
+            // String wsEchoStr = String("WebSocket connected from: ") + (num);
+            // Esp3DCom::echo(wsEchoStr.c_str());
         //USE_SERIAL.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
         String s = "CURRENT_ID:" + String(num);
         // send message to client
