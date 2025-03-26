@@ -108,7 +108,7 @@
 //defaults values
 #define DEFAULT_HOSTNAME "marlinesp"
 #ifndef WIFI_SSID
-#define DEFAULT_STA_SSID "Markhor3D"
+#define DEFAULT_STA_SSID "M3D Enabler"
 #define DEFAULT_RADIO_MODE ESP_WIFI_AP
 #else
 #define DEFAULT_STA_SSID WIFI_SSID
@@ -123,9 +123,9 @@
 #define DEFAULT_STA_GW "0.0.0.0"
 #define DEFAULT_STA_MK "0.0.0.0"
 #define DEFAULT_STA_IP_MODE DHCP_MODE
-#define DEFAULT_AP_SSID "Markhor3D"
+#define DEFAULT_AP_SSID "M3D Enabler"
 #define DEFAULT_AP_PWD "12345678"
-#define DEFAULT_AP_IP "192.168.0.1"
+#define DEFAULT_AP_IP "10.10.10.1"
 #define DEFAULT_AP_MK "255.255.255.0"
 #define DEFAULT_AP_CHANNEL 1
 #define DEFAULT_WEBSERVER_PORT 80
